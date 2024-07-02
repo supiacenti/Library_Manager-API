@@ -1,26 +1,33 @@
-import Publisher from '../entities/publisher.ts';
+import mongoose, { Schema, Model, Document } from "mongoose";
+import Publisher from '../models/publisher'
 
-class Book {
-    // Estrutura do Banco de Dados: isbn, pages, publisher, title, year, author
+interface Book extends Document {
     isbn: number;
     pages: number;
-    publisher: Publisher;
     title: string;
     year: number;
     author: string;
-
-    constructor(title: string, author: string, pages: number, isbn: number, year: number, publisher: Publisher){
-        this.isbn = isbn;
-        this.pages = pages;
-        this.publisher = Publisher;
-        this.title = title;
-        this.year = year;
-        this.author = author;
-    };
-
-    toStringBooks(){
-        console.log("Book: ${this.title}\nAuthor: ${this.author}")
-    }
+    publisher: Publisher;
 }
 
-export default Book;
+const BookSchema = new Schema<Book>({
+      isbn: { type: Number },
+      pages: { type: Number },
+      title: { type: String, required: true },
+      year: { type: Number },
+      author: { type: String },
+      publisher: { type: String }
+    }, { versionKey: false });
+
+class BookModel {
+  private static models: { [key: string]: Model<Book> } = {};
+
+  public static getBookModel(publisher: string): Model<Book> {
+    if (!this.models[publisher]) {
+      this.models[publisher] = mongoose.model<Book>(publisher, BookSchema, publisher);
+    }
+    return this.models[publisher];
+  }
+}
+
+export { Book, BookModel };

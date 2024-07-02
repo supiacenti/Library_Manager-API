@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Library</title>
+        <link rel="stylesheet" type="text/css" href="css/tabs.css" />
+        <link rel="stylesheet" type="text/css" href="css/blocks.css" />
+    </head>
+    <body>
+        <div class="popup">
+            <div class="tabs">
+                <input type="radio" id="tab1" name="tab" checked onclick="showContent('content1')" />
+                <label for="tab1">Home</label>
+                <input type="radio" id="tab2" name="tab" onclick="showContent('content2')" />
+                <label for="tab2">All Books</label>
+                <input type="radio" id="tab3" name="tab" onclick="showContent('content3')" />
+                <label for="tab3">Add Book</label>
+                <input type="radio" id="tab4" name="tab" onclick="showContent('content4')" />
+                <label for="tab4">Search Book</label>
+                <input type="radio" id="tab5" name="tab" onclick="showContent('content5')" />
+                <label for="tab5">Update Book</label>
+                <input type="radio" id="tab6" name="tab" onclick="showContent('content6')" />
+                <label for="tab6">Delete Book</label>
+                <div class="marker">
+                    <div id="top"></div>
+                    <div id="bottom"></div>
+                </div>
+            </div>
+            <div class="contents">
+                <div class="content" id="content1">
+                    <h2>Home</h2>
+                    <p>Welcome to the library!</p>
+                </div>
+                <div class="content" id="content2">
+                </div>
+                <div class="content" id="content3">
+                </div>
+                <div class="content" id="content4">
+                </div>
+                <div class="content" id="content5">
+                </div>
+                <div class="content" id="content6">
+                </div>
+            </div>
+        </div>
+        <script>
+            function showContent(contentId) {
+                const contents = document.querySelectorAll('.content');
+                contents.forEach(content => {
+                    content.style.display = 'none';
+                });
+                document.getElementById(contentId).style.display = 'block';
+            }
+
+            // Inicializar exibindo o conteúdo da aba "Home"
+            document.addEventListener('DOMContentLoaded', (event) => {
+                loadExternalContent('content1', 'pages/home.html');
+                loadExternalContent('content2', 'pages/allbooks.html');
+                loadExternalContent('content3', 'pages/addbook.html');
+                loadExternalContent('content4', 'pages/searchbook.html');
+                loadExternalContent('content5', 'pages/updatebook.html');
+                loadExternalContent('content6', 'pages/deletebook.html');
+            });
+
+            function loadExternalContent(contentId, url) {
+                fetch(url)
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById(contentId).innerHTML = data;
+                    })
+                    .catch(error => console.log('Error loading external content:', error));
+            }
+        </script>
+    </body>
+</html>

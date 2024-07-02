@@ -1,29 +1,16 @@
-import mongoose from "mongoose";
-import Publisher from '../entities/publisher'
+import mongoose, { Document } from "mongoose";
+import Publisher from '../models/publisher'
+import { BookModel } from '../models/book'
 
 class BookService {
-
-    private createBookSchema() {
-        return new mongoose.Schema({
-          isbn: { type: Number },
-          pages: { type: Number },
-          title: { type: String, required: true },
-          year: { type: Number },
-          author: { type: String },
-          publisher: { type: String }
-        }, { versionKey: false });
-    }
-
 
     public async createBook(req: any) {
         const publisher = new Publisher(req.body.publisher);
         const publisherName = publisher.toString();
 
-        const bookSchema = this.createBookSchema();
+        const Book = BookModel.getBookModel(publisherName);
 
-        const BookModel = mongoose.model(publisherName, bookSchema);
-
-        const newBook = new BookModel({
+        const newBook = new Book({
             isbn: req.body.isbn,
             pages: req.body.pages,
             title: req.body.title,
@@ -34,6 +21,48 @@ class BookService {
 
         await newBook.save();
         return newBook;
+    }
+
+    public static async getBooks() {
+        try {
+            const collections = await mongoose.connection.db.listCollections().toArray();
+            const booksPromises = collections.map(async (collection) => {
+              const Book = BookModel.getBookModel(collection.name);
+              return await Book.find().exec();
+            });
+            const booksArrays = await Promise.all(booksPromises);
+            return booksArrays.flat();
+          } catch (err) {
+            throw new Error(`Error fetching books: ${err}`);
+          }
+    }
+
+    public async getBook(title: string, publisher: string) {
+        try {
+            const Book = BookModel.getBookModel(publisher);
+            return await Book.find({ title }).exec();
+          } catch (err) {
+            throw new Error(`Error finding books: ${err}`);
+          }
+    }
+
+    public async updateBook(title: string, publisher: string, data: any) {
+        try {
+            console.log(title, publisher)
+            const Book = BookModel.getBookModel(publisher);
+            return await Book.updateOne({ title }, { $set: data });
+          } catch (err) {
+            throw new Error(`Error updating book: ${err}`);
+          }
+    }
+
+    public async deleteBook(title: string, publisher: string) {
+        try {
+            const Book = BookModel.getBookModel(publisher);
+            return await Book.deleteOne({ title });
+          } catch (err) {
+            throw new Error(`Error deleting book: ${err}`);
+          }
     }
 }
 

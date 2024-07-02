@@ -1,68 +1,35 @@
 import express, { Response, Request } from 'express';
-import databaseConnection from "./adapters/dbconnect";
-import Book from '../app/models/book'
-import BookService from '../app/services/bookService'
+import databaseConnection from './adapters/dbconnect';
+import router from './controllers/api_controller';
+import path from 'path';
 
+const app = express();
+const PORT = 3000;
 
-const startServer = async () => {
+app.use(express.json());
+
+const StartServer = async () => {
     try {
-        // Conexão com o Banco de Dados MongoDB
+        console.log(router)
         const connection = await databaseConnection();
 
-        connection.on("error", (err) => {
-            console.error("[ERROR] Connection Failed", err);
+        connection.on('error', (err) => {
+            console.error('[ERROR] Connection failed.', err);
+        });
+        connection.once('open', () => {
+            console.log('[INFO] Successful database connection.');
         });
 
-        connection.once("open", () => {
-            console.log("[INFO] Successfull database connection")
-        })
+        app.use('/books', router);
 
-        // Criação de app
-        const app = express();
-        const PORT = 3000;
-        app.use(express.json());
+        app.use(express.static(path.join(__dirname, 'static')));
 
-        // Listener
         app.listen(PORT, () => {
-            console.log("Servidor escutando!");
-          });
-          
-        // Routers
-        app.get("/", (req, res) => {
-            res.status(200).send("Main Page")
+            console.log(`Server running on http://localhost:${PORT}!`);
         });
-
-        app.get("/books", (req, res) => {
-            //
-        })
-
-        app.post("/books", async (req: Request<Book>, res: Response) => {
-            try {
-                const service = new BookService();
-                const book = await service.createBook(req);
-                res.status(201).send(book);
-                console.log("[INFO] Successfull")
-              } catch (error) {
-                console.error('Error creating book:', error);
-                res.status(500).send("[ERROR] Unable to create book");
-              }
-        })
-
-        app.get("/books/:id", (req, res) => {
-            //
-        })
-
-        app.put("/books/:id", (req, res) => {
-            //
-        })
-
-        app.delete("/books/:id", (req, res) => {
-            //
-        })
+    } catch (error) {
+        console.log('[ERROR] Server startup failed: ', error);
     }
-    catch (error) {
-        //
-    }
-}
+};
 
-startServer();
+StartServer();
