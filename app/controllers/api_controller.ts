@@ -1,5 +1,6 @@
 import express, { Router, Response, Request } from 'express';
 import BookService from '../../app/services/bookService';
+import EmployeeService from '../services/employeeService';
 
 const router = Router();
 
@@ -93,6 +94,16 @@ router.delete('/delete', async (req: Request, res: Response) => {
         console.error('Error deleting book:', error);
         res.status(500).send('[ERROR] Unable to delete book');
       }
+});
+
+router.get('/employees', async (req, res) => {
+  try {
+    const employeeService = new EmployeeService();
+    const employees = await employeeService.getAllEmployees();
+    res.json(employees);
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
 });
 
 export default router;
