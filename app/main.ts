@@ -4,7 +4,7 @@ import router from './controllers/api_controller';
 import path from 'path';
 
 const app = express();
-const PORT = 3000;
+const PORT = 5002;
 
 app.use(express.json());
 

@@ -1,4 +1,5 @@
 "use strict";
+// CONFIG: WebSite
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,9 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-loadExternalContent('content1', 'pages/home.html');
 document.addEventListener('DOMContentLoaded', function (event) {
-    loadExternalContent('content1', 'pages/home.html');
     loadExternalContent('content2', 'pages/allbooks.html');
     loadExternalContent('content3', 'pages/addbook.html');
     loadExternalContent('content4', 'pages/searchbook.html');
@@ -65,7 +64,7 @@ function loadExternalContent(contentId, url) {
     })
         .catch(function (error) { return console.error('Error loading external content:', error); });
 }
-// Add event listeners for the radio buttons
+// CONFIG: home.html page
 var radios = document.querySelectorAll('input[name="tab"]');
 radios.forEach(function (radio) {
     radio.addEventListener('click', function () { return showContent(radio.id.replace('tab', 'content')); });
@@ -87,7 +86,7 @@ function fetchEmployees() {
                     return [3 /*break*/, 4];
                 case 3:
                     error_1 = _a.sent();
-                    console.error('Error fetching employees:', error_1);
+                    console.error('Error fetching employees: ', error_1);
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
             }
@@ -104,5 +103,51 @@ function renderEmployees(employees) {
     });
 }
 document.addEventListener('DOMContentLoaded', function () {
+    showContent('content1');
     fetchEmployees();
+});
+// CONFIG: All Books
+function getBooks() {
+    return __awaiter(this, void 0, void 0, function () {
+        var response, books, error_2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 3, , 4]);
+                    return [4 /*yield*/, fetch('books/')];
+                case 1:
+                    response = _a.sent();
+                    return [4 /*yield*/, response.json()];
+                case 2:
+                    books = _a.sent();
+                    renderAllBooks(books);
+                    return [3 /*break*/, 4];
+                case 3:
+                    error_2 = _a.sent();
+                    console.error('Error fetching books: ', error_2);
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+function renderAllBooks(books) {
+    var booksContainer = document.querySelector('.library');
+    booksContainer.innerHTML = '';
+    var table = document.createElement('table');
+    table.className = "table-books";
+    var thead = document.createElement('thead');
+    thead.innerHTML = "\n      <tr>\n        <th>Title</th>\n        <th>Pages</th>\n        <th>ISBN</th>\n        <th>Year</th>\n        <th>Author</th>\n        <th>Publisher</th>\n      </tr>\n    ";
+    var tbody = document.createElement('tbody');
+    books.forEach(function (book) {
+        var row = document.createElement('tr');
+        row.innerHTML = "\n        <td>".concat(book.title, "</td>\n        <td>").concat(book.pages, "</td>\n        <td>").concat(book.isbn, "</td>\n        <td>").concat(book.year, "</td>\n        <td>").concat(book.author, "</td>\n        <td>").concat(book.publisher, "</td>\n      ");
+        tbody.appendChild(row);
+    });
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    booksContainer.appendChild(table);
+}
+document.addEventListener('DOMContentLoaded', function () {
+    getBooks();
 });

@@ -1,9 +1,6 @@
 // CONFIG: WebSite
 
-loadExternalContent('content1', 'pages/home.html');
-
 document.addEventListener('DOMContentLoaded', (event) => {
-    loadExternalContent('content1', 'pages/home.html');
     loadExternalContent('content2', 'pages/allbooks.html');
     loadExternalContent('content3', 'pages/addbook.html');
     loadExternalContent('content4', 'pages/searchbook.html');
@@ -46,7 +43,7 @@ async function fetchEmployees() {
       const employees = await response.json();
       renderEmployees(employees);
     } catch (error) {
-      console.error('Error fetching employees:', error);
+      console.error('Error fetching employees: ', error);
     }
   }
   
@@ -70,7 +67,60 @@ async function fetchEmployees() {
   }
   
   document.addEventListener('DOMContentLoaded', () => {
+    showContent('content1');
     fetchEmployees();
   });
 
 // CONFIG: All Books
+
+async function getBooks() {
+    try {
+      const response = await fetch('books/');
+      const books = await response.json();
+      renderAllBooks(books);
+    } catch (error) {
+      console.error('Error fetching books: ', error);
+    }
+  }
+
+  function renderAllBooks(books: any[]) {
+    const booksContainer = document.querySelector('.library') as HTMLElement;
+    booksContainer.innerHTML = '';
+
+    const table = document.createElement('table');
+    table.className = "table-books"
+
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+      <tr>
+        <th>Title</th>
+        <th>Pages</th>
+        <th>ISBN</th>
+        <th>Year</th>
+        <th>Author</th>
+        <th>Publisher</th>
+      </tr>
+    `;
+
+    const tbody = document.createElement('tbody');
+    books.forEach(book => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${book.title}</td>
+        <td>${book.pages}</td>
+        <td>${book.isbn}</td>
+        <td>${book.year}</td>
+        <td>${book.author}</td>
+        <td>${book.publisher}</td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    booksContainer.appendChild(table);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    getBooks();
+});
