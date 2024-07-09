@@ -1,16 +1,16 @@
-.addBook {
+.addBook, .searchBook, .deleteBook, .updateBook {
     display: flex;
     justify-content: center;
     align-items: center;
   }
   
-  #add {
+  #add, #search, #delete, #update {
     padding: 10px;
     border-radius: 15px;
     margin: 4%;
   }
   
-  #add_form {
+  #add_form, #search_form, #delete_form, #update_form {
     display: flex;
     flex-direction: column;
   }
@@ -31,7 +31,7 @@
     color: #aaa;
   }
   
-  #add_button {
+  #add_button, #search_button, #delete_button, #update_button {
     background-color: #3b8ea5;
     color: white;
     padding: 10px;
@@ -41,7 +41,7 @@
     font-size: 16px;
   }
   
-  #add_button:hover {
+  #add_button:hover, #search_button:hover, #delete_button:hover, #update_button:hover {
     background-color: #68bed6;
   }
   
@@ -60,3 +60,6 @@
     margin-right: 10px;
   }
   
+.field_container_update {
+  margin-left: 25%;
+}

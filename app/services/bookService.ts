@@ -3,7 +3,6 @@ import Publisher from '../models/publisher'
 import { BookModel } from '../models/book'
 
 class BookService {
-
     public async createBook(req: any) {
         const publisher = new Publisher(req.body.publisher);
         const publisherName = publisher.toString();
@@ -24,17 +23,20 @@ class BookService {
     }
 
     public static async getBooks() {
+        const collectionToIgnore = 'Employees';
         try {
-            const collections = await mongoose.connection.db.listCollections().toArray();
-            const booksPromises = collections.map(async (collection) => {
-              const Book = BookModel.getBookModel(collection.name);
-              return await Book.find().exec();
-            });
-            const booksArrays = await Promise.all(booksPromises);
-            return booksArrays.flat();
-          } catch (err) {
-            throw new Error(`Error fetching books: ${err}`);
-          }
+          const collections = await mongoose.connection.db.listCollections().toArray();
+          const filteredCollections = collections.filter(collection => collection.name !== collectionToIgnore);
+          const booksPromises = filteredCollections.map(async (collection) => {
+            const Book = BookModel.getBookModel(collection.name);
+            return await Book.find().exec();
+          });
+      
+          const booksArrays = await Promise.all(booksPromises);
+          return booksArrays.flat();
+        } catch (error) {
+          throw new Error(`Error fetching books: ${error}`);
+        }
     }
 
     public async getBook(title: string, publisher: string) {
@@ -48,7 +50,6 @@ class BookService {
 
     public async updateBook(title: string, publisher: string, data: any) {
         try {
-            console.log(title, publisher)
             const Book = BookModel.getBookModel(publisher);
             return await Book.updateOne({ title }, { $set: data });
           } catch (err) {
@@ -60,9 +61,9 @@ class BookService {
         try {
             const Book = BookModel.getBookModel(publisher);
             return await Book.deleteOne({ title });
-          } catch (err) {
+        } catch (err) {
             throw new Error(`Error deleting book: ${err}`);
-          }
+        }
     }
 }
 

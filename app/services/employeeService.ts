@@ -1,4 +1,3 @@
-import mongoose, { Document } from "mongoose";
 import Employee from "../models/employee";
 
 class EmployeeService {

@@ -88,8 +88,8 @@ router.delete('/delete', async (req: Request, res: Response) => {
         if (!publisher) {
           return res.status(400).send('[ERROR] Publisher name is required');
         }
-        await bookService.deleteBook(title, publisher);
-        res.status(200).send('[INFO] Successfully deleted book');
+        const result = await bookService.deleteBook(title, publisher);
+        res.status(200).send(result);
       } catch (error) {
         console.error('Error deleting book:', error);
         res.status(500).send('[ERROR] Unable to delete book');

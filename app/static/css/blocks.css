@@ -1,56 +1,54 @@
 .contents {
-    width: 70%;
+    width: 80%;
     height: 100%;
     padding: 10px;
     display: flex;
     flex-direction: column;
-    overflow-y: auto; /* Adicionado para permitir rolagem na div .contents */
+    overflow-y: auto;
 }
 
-/* Personalização da barra de rolagem */
 .contents::-webkit-scrollbar {
     width: 12px;
 }
 
 .contents::-webkit-scrollbar-track {
-    background: #f5ee9e; /* Cor do fundo da barra de rolagem */
+    background: #f5ee9e;
     border-radius: 10px;
 }
 
 .contents::-webkit-scrollbar-thumb {
-    background-color: #ab3428; /* Cor da barra de rolagem */
+    background-color: #ab3428;
     border-radius: 10px;
-    border: 3px solid #f5ee9e; /* Espessura e cor da borda ao redor da barra de rolagem */
+    border: 3px solid #f5ee9e;
 }
 
 .contents::-webkit-scrollbar-thumb:hover {
-    background-color: #3b8ea5; /* Cor da barra de rolagem ao passar o mouse */
+    background-color: #3b8ea5;
 }
 
 
 .content {
     width: 100%;
-    overflow-y: auto; /* Adicionado para permitir rolagem dentro de cada .content */
-    display: none; /* Esconde todos os divs de conteúdo por padrão */
-    max-height: 100%; /* Garante que o conteúdo não exceda a altura do contêiner pai */
+    overflow-y: auto;
+    display: none;
+    max-height: 100%;
 }
 
-/* Personalização da barra de rolagem para .content */
 .content::-webkit-scrollbar {
     width: 12px;
 }
 
 .content::-webkit-scrollbar-track {
-    background: #f5ee9e; /* Cor do fundo da barra de rolagem */
+    background: #f5ee9e;
     border-radius: 10px;
 }
 
 .content::-webkit-scrollbar-thumb {
-    background-color: #ab3428; /* Cor da barra de rolagem */
+    background-color: #ab3428;
     border-radius: 10px;
-    border: 3px solid #f5ee9e; /* Espessura e cor da borda ao redor da barra de rolagem */
+    border: 3px solid #f5ee9e;
 }
 
 .content::-webkit-scrollbar-thumb:hover {
-    background-color: #3b8ea5; /* Cor da barra de rolagem ao passar o mouse */
+    background-color: #3b8ea5;
 }

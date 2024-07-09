@@ -10,7 +10,6 @@ app.use(express.json());
 
 const StartServer = async () => {
     try {
-        console.log(router)
         const connection = await databaseConnection();
 
         connection.on('error', (err) => {

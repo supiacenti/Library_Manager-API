@@ -1,3 +1,8 @@
+interface Books {
+  title: string;
+  publisher: string;
+}
+
 // CONFIG: WebSite
 
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -55,11 +60,11 @@ async function fetchEmployees() {
       profileContainer.className = 'profile-container';
   
       profileContainer.innerHTML = `
-        <img src="${employee.profile}" alt="Foto do Funcionário">
+        <img src="${employee.profile}">
         <h2>${employee.name}</h2>
-        <p>Cargo: ${employee.role}</p>
-        <p>Email: ${employee.email}</p>
-        <p>Telefone: ${employee.phone}</p>
+        <p>Role: ${employee.role}</p>
+        <p>E-mail: ${employee.email}</p>
+        <p>Phone: ${employee.phone}</p>
       `;
   
       profilesContainer.appendChild(profileContainer);
@@ -77,14 +82,15 @@ async function getBooks() {
     try {
       const response = await fetch('books/');
       const books = await response.json();
-      renderAllBooks(books);
+      renderAllBooks(books, 'library');
     } catch (error) {
       console.error('Error fetching books: ', error);
     }
   }
 
-  function renderAllBooks(books: any[]) {
-    const booksContainer = document.querySelector('.library') as HTMLElement;
+  function renderAllBooks(books: any[], lib: string) {
+    const classContainer = "." + lib;
+    const booksContainer = document.querySelector(classContainer) as HTMLElement;
     booksContainer.innerHTML = '';
 
     const table = document.createElement('table');
@@ -188,9 +194,144 @@ async function addBooks() {
 
     const result = await response.json();
     console.log('Success:', result);
-    showModal('Livro cadastrado com sucesso!', true);
+    showModal('Book added successfully!', true);
   } catch (error) {
     console.error('Error:', error);
-    showModal('Erro ao cadastrar o livro.', false);
+    showModal('Unable to add book.', false);
+  }
+}
+
+// CONFIG: Search book
+
+function bookSearch(): Books {
+  return {
+    title: (document.getElementById("search_title") as HTMLInputElement).value,
+    publisher: (document.getElementById("search_publisher") as HTMLInputElement).value
+  };
+}
+
+async function searchBook() {
+  const url = 'http://localhost:5002/books/search';
+  const data = bookSearch();
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('Success:', result);
+    showModal('Book found successfully!', true);
+    renderAllBooks(result, 'searchLibrary')
+  } catch (error) {
+    console.error('Error:', error);
+    showModal('Book not found.', false);
+  }
+}
+
+// CONFIG: Update book
+
+interface UpdateBookData {
+  title: string;
+  publisher: string;
+  data: {
+    author?: string;
+    year?: number;
+    isbn?: number;
+    pages?: number;
+  };
+}
+
+function getUpdateFormData(): UpdateBookData | null {
+  const title = (document.getElementById("update_title") as HTMLInputElement).value;
+  const publisher = (document.getElementById("update_publisher") as HTMLInputElement).value;
+
+  if (!title || !publisher) {
+    alert('Title and Publisher are mandatory.');
+    return null;
+  }
+
+  const data: UpdateBookData['data'] = {};
+  const author = (document.getElementById("update_author") as HTMLInputElement).value;
+  const year = (document.getElementById("update_year") as HTMLInputElement).value;
+  const isbn = (document.getElementById("update_isbn") as HTMLInputElement).value;
+  const pages = (document.getElementById("update_pages") as HTMLInputElement).value;
+
+  if (author) data.author = author;
+  if (year) data.year = Number(year);
+  if (isbn) data.isbn = Number(isbn);
+  if (pages) data.pages = Number(pages);
+
+  return { title, publisher, data };
+}
+
+async function updateBook() {
+  const url = 'http://localhost:5002/books/update';
+  const data = getUpdateFormData();
+
+  if (!data) return;
+
+  try {
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('Success:', result);
+    showModal('Book updated successfully!', true);
+  } catch (error) {
+    console.error('Error:', error);
+    showModal('Unable to update book.', false);
+  }
+}
+
+// CONFIG: Delete book
+
+function bookDelete(): Books {
+  return {
+    title: (document.getElementById("delete_title") as HTMLInputElement).value,
+    publisher: (document.getElementById("delete_publisher") as HTMLInputElement).value
+  };
+}
+
+async function deleteBook() {
+  const url = 'http://localhost:5002/books/delete';
+  const data = bookDelete();
+
+  try {
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('Success:', result);
+    showModal('Successfully deleted book!', true);
+  } catch (error) {
+    console.error('Error:', error);
+    showModal('Unable to delete book.', false);
   }
 }

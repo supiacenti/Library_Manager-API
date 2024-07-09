@@ -1,5 +1,4 @@
 "use strict";
-// CONFIG: WebSite
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,6 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+// CONFIG: WebSite
 document.addEventListener('DOMContentLoaded', function (event) {
     loadExternalContent('content2', 'pages/allbooks.html');
     loadExternalContent('content3', 'pages/addbook.html');
@@ -98,7 +98,7 @@ function renderEmployees(employees) {
     employees.forEach(function (employee) {
         var profileContainer = document.createElement('div');
         profileContainer.className = 'profile-container';
-        profileContainer.innerHTML = "\n        <img src=\"".concat(employee.profile, "\" alt=\"Foto do Funcion\u00E1rio\">\n        <h2>").concat(employee.name, "</h2>\n        <p>Cargo: ").concat(employee.role, "</p>\n        <p>Email: ").concat(employee.email, "</p>\n        <p>Telefone: ").concat(employee.phone, "</p>\n      ");
+        profileContainer.innerHTML = "\n        <img src=\"".concat(employee.profile, "\">\n        <h2>").concat(employee.name, "</h2>\n        <p>Role: ").concat(employee.role, "</p>\n        <p>E-mail: ").concat(employee.email, "</p>\n        <p>Phone: ").concat(employee.phone, "</p>\n      ");
         profilesContainer.appendChild(profileContainer);
     });
 }
@@ -120,7 +120,7 @@ function getBooks() {
                     return [4 /*yield*/, response.json()];
                 case 2:
                     books = _a.sent();
-                    renderAllBooks(books);
+                    renderAllBooks(books, 'library');
                     return [3 /*break*/, 4];
                 case 3:
                     error_2 = _a.sent();
@@ -131,8 +131,9 @@ function getBooks() {
         });
     });
 }
-function renderAllBooks(books) {
-    var booksContainer = document.querySelector('.library');
+function renderAllBooks(books, lib) {
+    var classContainer = "." + lib;
+    var booksContainer = document.querySelector(classContainer);
     booksContainer.innerHTML = '';
     var table = document.createElement('table');
     table.className = "table-books";
@@ -204,12 +205,168 @@ function addBooks() {
                 case 3:
                     result = _a.sent();
                     console.log('Success:', result);
-                    showModal('Livro cadastrado com sucesso!', true);
+                    showModal('Book added successfully!', true);
                     return [3 /*break*/, 5];
                 case 4:
                     error_3 = _a.sent();
                     console.error('Error:', error_3);
-                    showModal('Erro ao cadastrar o livro.', false);
+                    showModal('Unable to add book.', false);
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+}
+// CONFIG: Search book
+function bookSearch() {
+    return {
+        title: document.getElementById("search_title").value,
+        publisher: document.getElementById("search_publisher").value
+    };
+}
+function searchBook() {
+    return __awaiter(this, void 0, void 0, function () {
+        var url, data, response, result, error_4;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    url = 'http://localhost:5002/books/search';
+                    data = bookSearch();
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        })];
+                case 2:
+                    response = _a.sent();
+                    if (!response.ok) {
+                        throw new Error("HTTP error! status: ".concat(response.status));
+                    }
+                    return [4 /*yield*/, response.json()];
+                case 3:
+                    result = _a.sent();
+                    console.log('Success:', result);
+                    showModal('Book found successfully!', true);
+                    renderAllBooks(result, 'searchLibrary');
+                    return [3 /*break*/, 5];
+                case 4:
+                    error_4 = _a.sent();
+                    console.error('Error:', error_4);
+                    showModal('Book not found.', false);
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+}
+function getUpdateFormData() {
+    var title = document.getElementById("update_title").value;
+    var publisher = document.getElementById("update_publisher").value;
+    if (!title || !publisher) {
+        alert('Title and Publisher are mandatory.');
+        return null;
+    }
+    var data = {};
+    var author = document.getElementById("update_author").value;
+    var year = document.getElementById("update_year").value;
+    var isbn = document.getElementById("update_isbn").value;
+    var pages = document.getElementById("update_pages").value;
+    if (author)
+        data.author = author;
+    if (year)
+        data.year = Number(year);
+    if (isbn)
+        data.isbn = Number(isbn);
+    if (pages)
+        data.pages = Number(pages);
+    return { title: title, publisher: publisher, data: data };
+}
+function updateBook() {
+    return __awaiter(this, void 0, void 0, function () {
+        var url, data, response, result, error_5;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    url = 'http://localhost:5002/books/update';
+                    data = getUpdateFormData();
+                    if (!data)
+                        return [2 /*return*/];
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, fetch(url, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        })];
+                case 2:
+                    response = _a.sent();
+                    if (!response.ok) {
+                        throw new Error("HTTP error! status: ".concat(response.status));
+                    }
+                    return [4 /*yield*/, response.json()];
+                case 3:
+                    result = _a.sent();
+                    console.log('Success:', result);
+                    showModal('Book updated successfully!', true);
+                    return [3 /*break*/, 5];
+                case 4:
+                    error_5 = _a.sent();
+                    console.error('Error:', error_5);
+                    showModal('Unable to update book.', false);
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+}
+// CONFIG: Delete book
+function bookDelete() {
+    return {
+        title: document.getElementById("delete_title").value,
+        publisher: document.getElementById("delete_publisher").value
+    };
+}
+function deleteBook() {
+    return __awaiter(this, void 0, void 0, function () {
+        var url, data, response, result, error_6;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    url = 'http://localhost:5002/books/delete';
+                    data = bookDelete();
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, fetch(url, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        })];
+                case 2:
+                    response = _a.sent();
+                    if (!response.ok) {
+                        throw new Error("HTTP error! status: ".concat(response.status));
+                    }
+                    return [4 /*yield*/, response.json()];
+                case 3:
+                    result = _a.sent();
+                    console.log('Success:', result);
+                    showModal('Successfully deleted book!', true);
+                    return [3 /*break*/, 5];
+                case 4:
+                    error_6 = _a.sent();
+                    console.error('Error:', error_6);
+                    showModal('Unable to delete book.', false);
                     return [3 /*break*/, 5];
                 case 5: return [2 /*return*/];
             }
