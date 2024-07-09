@@ -124,3 +124,73 @@ async function getBooks() {
   document.addEventListener('DOMContentLoaded', () => {
     getBooks();
 });
+
+
+// CONFIG: Add Book
+
+interface BookData {
+  isbn: number;
+  pages: number;
+  title: string;
+  year: number;
+  author: string;
+  publisher: string;
+}
+
+function getFormData(): BookData {
+  return {
+    isbn: Number((document.getElementById("add_isbn") as HTMLInputElement).value),
+    pages: Number((document.getElementById("add_pages") as HTMLInputElement).value),
+    title: (document.getElementById("add_title") as HTMLInputElement).value,
+    year: Number((document.getElementById("add_year") as HTMLInputElement).value),
+    author: (document.getElementById("add_author") as HTMLInputElement).value,
+    publisher: (document.getElementById("add_publisher") as HTMLInputElement).value
+  };
+}
+
+function showModal(message: string, isSuccess: boolean) {
+  const modal = document.getElementById("modal") as HTMLDivElement;
+  const modalMessage = document.getElementById("modal-message") as HTMLParagraphElement;
+  const closeButton = document.querySelector(".close-button") as HTMLSpanElement;
+
+  modalMessage.textContent = message;
+  modalMessage.className = isSuccess ? 'success' : 'error';
+  
+  modal.style.display = "block";
+
+  closeButton.onclick = function() {
+    modal.style.display = "none";
+  }
+
+  window.onclick = function(event) {
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  }
+}
+
+async function addBooks() {
+  const url = 'http://localhost:5002/books/';
+  const data = getFormData();
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('Success:', result);
+    showModal('Livro cadastrado com sucesso!', true);
+  } catch (error) {
+    console.error('Error:', error);
+    showModal('Erro ao cadastrar o livro.', false);
+  }
+}

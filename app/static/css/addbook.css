@@ -1,0 +1,62 @@
+.addBook {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  #add {
+    padding: 10px;
+    border-radius: 15px;
+    margin: 4%;
+  }
+  
+  #add_form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .field_container {
+    margin-bottom: 15px;
+  }
+  
+  input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  input[type="text"]::placeholder {
+    color: #aaa;
+  }
+  
+  #add_button {
+    background-color: #3b8ea5;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  #add_button:hover {
+    background-color: #68bed6;
+  }
+  
+  .button_text {
+    font-weight: bold;
+  }
+  
+  .field_container:last-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .field_container:last-child input[type="text"] {
+    flex: 1;
+    margin-right: 10px;
+  }
+  

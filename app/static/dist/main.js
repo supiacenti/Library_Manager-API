@@ -151,3 +151,68 @@ function renderAllBooks(books) {
 document.addEventListener('DOMContentLoaded', function () {
     getBooks();
 });
+function getFormData() {
+    return {
+        isbn: Number(document.getElementById("add_isbn").value),
+        pages: Number(document.getElementById("add_pages").value),
+        title: document.getElementById("add_title").value,
+        year: Number(document.getElementById("add_year").value),
+        author: document.getElementById("add_author").value,
+        publisher: document.getElementById("add_publisher").value
+    };
+}
+function showModal(message, isSuccess) {
+    var modal = document.getElementById("modal");
+    var modalMessage = document.getElementById("modal-message");
+    var closeButton = document.querySelector(".close-button");
+    modalMessage.textContent = message;
+    modalMessage.className = isSuccess ? 'success' : 'error';
+    modal.style.display = "block";
+    closeButton.onclick = function () {
+        modal.style.display = "none";
+    };
+    window.onclick = function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+}
+function addBooks() {
+    return __awaiter(this, void 0, void 0, function () {
+        var url, data, response, result, error_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    url = 'http://localhost:5002/books/';
+                    data = getFormData();
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        })];
+                case 2:
+                    response = _a.sent();
+                    if (!response.ok) {
+                        throw new Error("HTTP error! status: ".concat(response.status));
+                    }
+                    return [4 /*yield*/, response.json()];
+                case 3:
+                    result = _a.sent();
+                    console.log('Success:', result);
+                    showModal('Livro cadastrado com sucesso!', true);
+                    return [3 /*break*/, 5];
+                case 4:
+                    error_3 = _a.sent();
+                    console.error('Error:', error_3);
+                    showModal('Erro ao cadastrar o livro.', false);
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+}
